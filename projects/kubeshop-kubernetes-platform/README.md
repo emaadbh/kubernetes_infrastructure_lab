@@ -994,54 +994,192 @@ The platform should be designed and tested for:
 This project is intended to live inside a repository that contains multiple DevOps project scenarios.
 
 ```text
-devops-project-labs/
+kubernetes-project-labs/
 ├── README.md
-├── projects/
-│   ├── kubeshop-kubernetes-platform/
-│   │   ├── README.md
-│   │   ├── docs/
-│   │   │   ├── architecture.md
-│   │   │   ├── networking.md
-│   │   │   ├── security.md
-│   │   │   ├── monitoring.md
-│   │   │   ├── backup-restore.md
-│   │   │   └── runbooks/
-│   │   ├── applications/
-│   │   │   ├── frontend/
-│   │   │   ├── api-gateway/
-│   │   │   ├── auth-service/
-│   │   │   ├── product-service/
-│   │   │   ├── order-service/
-│   │   │   ├── payment-service/
-│   │   │   └── notification-worker/
-│   │   ├── kubernetes/
-│   │   │   ├── base/
-│   │   │   ├── staging/
-│   │   │   ├── production/
-│   │   │   ├── ingress/
-│   │   │   ├── data-services/
-│   │   │   ├── observability/
-│   │   │   ├── network-policies/
-│   │   │   ├── rbac/
-│   │   │   └── autoscaling/
-│   │   ├── monitoring/
-│   │   │   ├── dashboards/
-│   │   │   ├── alerts/
-│   │   │   └── rules/
-│   │   ├── ci-cd/
-│   │   │   ├── pipelines/
-│   │   │   └── gitops/
-│   │   └── scripts/
-│   │       ├── health-check/
-│   │       ├── backup/
-│   │       ├── restore/
-│   │       └── smoke-test/
-│   └── future-project/
-└── shared/
-    ├── templates/
-    ├── scripts/
-    └── documentation/
-```
+├── LICENSE
+├── .gitignore
+│
+└── projects/
+    └── kubeshop-kubernetes-platform/
+        ├── README.md
+        ├── kustomization.yaml
+        │
+        ├── namespaces/
+        │   ├── kubeshop-staging.yaml
+        │   ├── kubeshop-production.yaml
+        │   ├── data-services.yaml
+        │   └── observability.yaml
+        │
+        ├── base/
+        │   ├── kustomization.yaml
+        │   │
+        │   ├── frontend/
+        │   │   ├── deployment.yaml
+        │   │   ├── service.yaml
+        │   │   ├── configmap.yaml
+        │   │   ├── serviceaccount.yaml
+        │   │   └── kustomization.yaml
+        │   │
+        │   ├── api-gateway/
+        │   │   ├── deployment.yaml
+        │   │   ├── service.yaml
+        │   │   ├── configmap.yaml
+        │   │   ├── serviceaccount.yaml
+        │   │   └── kustomization.yaml
+        │   │
+        │   ├── auth-service/
+        │   │   ├── deployment.yaml
+        │   │   ├── service.yaml
+        │   │   ├── configmap.yaml
+        │   │   ├── serviceaccount.yaml
+        │   │   └── kustomization.yaml
+        │   │ 
+        ├── overlays/
+        │   ├── staging/
+        │   │   ├── kustomization.yaml
+        │   │   ├── namespace.yaml
+        │   │   ├── ingress.yaml
+        │   │   ├── replicas-patch.yaml
+        │   │   ├── resources-patch.yaml
+        │   │   ├── config-patch.yaml
+        │   │   └── image-tags.yaml
+        │   │
+        │   └── production/
+        │       ├── kustomization.yaml
+        │       ├── namespace.yaml
+        │       ├── ingress.yaml
+        │       ├── replicas-patch.yaml
+        │       ├── resources-patch.yaml
+        │       ├── config-patch.yaml
+        │       ├── image-tags.yaml
+        │       ├── topology-spread-patch.yaml
+        │       └── pod-security-patch.yaml
+        │
+        ├── data-services/
+        │   ├── kustomization.yaml
+        │   │
+        │   ├── postgresql/
+        │   │   ├── statefulset.yaml
+        │   │   ├── service.yaml
+        │   │   ├── headless-service.yaml
+        │   │   ├── configmap.yaml
+        │   │   ├── serviceaccount.yaml
+        │   │   ├── persistent-volume-claim.yaml
+        │   │   ├── backup-cronjob.yaml
+        │   │   └── kustomization.yaml
+        │   │
+        │   ├── redis/
+        │   │   ├── deployment.yaml
+        │   │   ├── service.yaml
+        │   │   ├── configmap.yaml
+        │   │   ├── serviceaccount.yaml
+        │   │   └── kustomization.yaml
+        │   │
+        │   └── rabbitmq/
+        │       ├── statefulset.yaml
+        │       ├── service.yaml
+        │       ├── headless-service.yaml
+        │       ├── configmap.yaml
+        │       ├── serviceaccount.yaml
+        │       ├── persistent-volume-claim.yaml
+        │       └── kustomization.yaml
+        │
+        ├── ingress/
+        │   ├── cluster-issuer.yaml
+        │   ├── staging-certificate.yaml
+        │   ├── production-certificate.yaml
+        │   └── kustomization.yaml
+        │
+        ├── autoscaling/
+        │   ├── frontend-hpa.yaml
+        │   ├── api-gateway-hpa.yaml
+        │   ├── auth-service-hpa.yaml
+        │   ├── product-service-hpa.yaml
+        │   ├── order-service-hpa.yaml
+        │   ├── payment-service-hpa.yaml
+        │   ├── notification-worker-scaledobject.yaml
+        │   └── kustomization.yaml
+        │
+        ├── availability/
+        │   ├── frontend-pdb.yaml
+        │   ├── api-gateway-pdb.yaml
+        │   ├── auth-service-pdb.yaml
+        │   ├── product-service-pdb.yaml
+        │   ├── order-service-pdb.yaml
+        │   ├── payment-service-pdb.yaml
+        │   └── kustomization.yaml
+        │
+        ├── network-policies/
+        │   ├── default-deny-ingress.yaml
+        │   ├── default-deny-egress.yaml
+        │   ├── allow-dns.yaml
+        │   ├── ingress-to-frontend.yaml
+        │   ├── ingress-to-api-gateway.yaml
+        │   ├── frontend-to-api-gateway.yaml
+        │   ├── api-gateway-to-auth.yaml
+        │   ├── api-gateway-to-product.yaml
+        │   ├── api-gateway-to-order.yaml
+        │   ├── api-gateway-to-payment.yaml
+        │   ├── auth-to-postgresql.yaml
+        │   ├── product-to-postgresql.yaml
+        │   ├── product-to-redis.yaml
+        │   ├── order-to-postgresql.yaml
+        │   ├── order-to-payment.yaml
+        │   ├── order-to-rabbitmq.yaml
+        │   ├── payment-to-postgresql.yaml
+        │   ├── worker-to-rabbitmq.yaml
+        │   └── kustomization.yaml
+        │
+        ├── rbac/
+        │   ├── developer-role.yaml
+        │   ├── developer-rolebinding.yaml
+        │   ├── devops-role.yaml
+        │   ├── devops-rolebinding.yaml
+        │   ├── readonly-role.yaml
+        │   ├── readonly-rolebinding.yaml
+        │   └── kustomization.yaml
+        │
+        ├── security/
+        │   ├── resource-quota-staging.yaml
+        │   ├── resource-quota-production.yaml
+        │   ├── limit-range-staging.yaml
+        │   ├── limit-range-production.yaml
+        │   ├── pod-security-labels.yaml
+        │   └── kustomization.yaml
+        │
+        ├── secrets/
+        │   ├── README.md
+        │   ├── database-secret.example.yaml
+        │   ├── rabbitmq-secret.example.yaml
+        │   ├── jwt-secret.example.yaml
+        │   └── registry-secret.example.yaml
+        │
+        ├── observability/
+        │   ├── service-monitors/
+        │   │   ├── api-gateway.yaml
+        │   │   ├── auth-service.yaml
+        │   │   ├── product-service.yaml
+        │   │   ├── order-service.yaml
+        │   │   ├── payment-service.yaml
+        │   │   ├── postgresql.yaml
+        │   │   ├── redis.yaml
+        │   │   └── rabbitmq.yaml
+        │   │
+        │   ├── prometheus-rules/
+        │   │   ├── application-alerts.yaml
+        │   │   ├── kubernetes-alerts.yaml
+        │   │   ├── database-alerts.yaml
+        │   │   └── rabbitmq-alerts.yaml
+        │   │
+        │   └── kustomization.yaml
+        │
+        └── jobs/
+            ├── database-backup-cronjob.yaml
+            ├── database-restore-job.example.yaml
+            ├── database-migration-job.yaml
+            ├── smoke-test-job.yaml
+            └── kustomization.yaml
+            ```
 
 ---
 
