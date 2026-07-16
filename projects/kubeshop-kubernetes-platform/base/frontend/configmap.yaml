@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  labels:
+    app: frontend
+data:
+  APP_NAME: "KubeShop Frontend"
+  APP_ENV: "development"
+  LOG_LEVEL: "info"
